@@ -62,6 +62,7 @@ li {
   border-bottom: 1px solid #ccc;
   font-size: 0.95em;
 }
+
 /* レスポンシブ対応 */
 @media screen and (max-width: 600px) {
   h1 {

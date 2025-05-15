@@ -19,7 +19,7 @@ document.getElementById('proxyForm').addEventListener('submit', function(e) {
 function displayHistory(filter = '') {
   const historyList = document.getElementById('historyList');
   if (!historyList) return;
-  
+
   historyList.innerHTML = '';
   let history = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]');
   history = history.reverse();
