@@ -4,7 +4,7 @@ document.getElementById('proxyForm').addEventListener('submit', function(e) {
   if (!input) return;
 
   const isURL = input.includes('.') || input.startsWith('http');
-  const target = isURL ? input : 'https://www.google.com/search?q=' + encodeURIComponent(input);
+  const target = isURL ? input : 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
 
   let history = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]');
   history.push({
@@ -38,6 +38,18 @@ document.getElementById('historySearch')?.addEventListener('input', function() {
 });
 
 displayHistory();
+
+function goBack() {
+  window.location.href = '/';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const isProxyPage = window.location.pathname.startsWith('/proxy/');
+  const backButton = document.getElementById('backButton');
+  if (isProxyPage && backButton) {
+    backButton.style.display = 'inline-block';
+  }
+});
 
 window.addEventListener('beforeunload', () => {
   try {

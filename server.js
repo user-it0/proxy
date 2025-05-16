@@ -4,7 +4,17 @@ const path = require('path');
 
 const app = express();
 
-app.use(unblocker({ prefix: '/proxy/' }));
+app.use(unblocker({
+  prefix: '/proxy/',
+  requestMiddleware: [
+    (req, res, next) => {
+      req.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)';
+      req.headers['referer'] = 'https://www.google.com/';
+      next();
+    }
+  ]
+}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
