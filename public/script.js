@@ -6,25 +6,21 @@ document.getElementById('proxyForm').addEventListener('submit', function(e) {
   const isURL = input.includes('.') || input.startsWith('http');
   const target = isURL ? input : 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
 
-  let history = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]');
-  history.push({
-    time: new Date().toISOString(),
-    query: target
-  });
-  localStorage.setItem('tm_proxy_history', JSON.stringify(history));
+  // Save history
+  let historyArr = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]');
+  historyArr.push({ time: new Date().toISOString(), query: target });
+  localStorage.setItem('tm_proxy_history', JSON.stringify(historyArr));
 
-  window.location.replace('/proxy/' + target);
+  // Redirect without adding to history, encode URL
+  window.location.replace('/proxy/' + encodeURIComponent(target));
 });
 
 function displayHistory(filter = '') {
   const historyList = document.getElementById('historyList');
   if (!historyList) return;
-
   historyList.innerHTML = '';
-  let history = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]');
-  history = history.reverse();
-
-  history.forEach(item => {
+  let historyArr = JSON.parse(localStorage.getItem('tm_proxy_history') || '[]').reverse();
+  historyArr.forEach(item => {
     if (item.query.toLowerCase().includes(filter.toLowerCase())) {
       const li = document.createElement('li');
       li.textContent = `${item.query} (${new Date(item.time).toLocaleString()})`;
@@ -36,7 +32,6 @@ function displayHistory(filter = '') {
 document.getElementById('historySearch')?.addEventListener('input', function() {
   displayHistory(this.value);
 });
-
 displayHistory();
 
 function goBack() {
@@ -46,13 +41,11 @@ function goBack() {
 window.addEventListener('DOMContentLoaded', () => {
   const isProxyPage = window.location.pathname.startsWith('/proxy/');
   const backButton = document.getElementById('backButton');
-  if (isProxyPage && backButton) {
-    backButton.style.display = 'inline-block';
-  }
+  if (isProxyPage && backButton) backButton.style.display = 'inline-block';
 });
 
+// On unload, clear local history and replace URL
 window.addEventListener('beforeunload', () => {
-  try {
-    history.replaceState(null, '', '/');
-  } catch (e) {}
+  try { history.replaceState(null, '', '/'); } catch {}
+  localStorage.removeItem('tm_proxy_history');
 });
